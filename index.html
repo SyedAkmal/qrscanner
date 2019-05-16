@@ -9,7 +9,7 @@
     <body>
         <div ng-app="myApp" ng-controller="myCtrl">
         <video playsinline id="preview"></video>
-        {{QR}}
+        <p ng-bind-html="QR"></p>  
             </div>
     <script type="text/javascript">
         var app = angular.module('myApp', []);
