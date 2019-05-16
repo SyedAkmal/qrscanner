@@ -13,6 +13,8 @@
             </div>
     <script type="text/javascript">
         var app = angular.module('myApp', []);
+        (function(app){
+         "use strict";
         app.controller('myCtrl', function($scope) {
            let qrCode;
           let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
@@ -31,7 +33,7 @@
           }).catch(function (e) {
             console.error(e);
           });
-});
+})(myApp);
      
     </script>
     </body>
