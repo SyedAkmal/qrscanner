@@ -1,33 +1,36 @@
 <!doctype html>
-<html ng-app>
-    <head>
-        <script type="text/javascript"
-            src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-        <script
-            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
-    </head>
-    <body>
-<!--         <div ng-app="myApp" ng-controller="myCtrl"> -->
-        <video playsinline id="preview"></video>
-<!--         <p ng-bind-html="QR"></p>  
-            </div> -->
+<html ng-app='umbraco'>
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <script type="text/javascript"
+      src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+  </head>
+  <body>
+    <div ng-controller="scanController">
+      <button ng-click="qrscanner()">start Camera</button>
+      <video playsinline id="preview"></video>
+      {{response}}
+    </div>
+
+
+
     <script type="text/javascript">
-//         var app = angular.module('myApp', []);
-//         (function(app){
-//          "use strict";
-//         app.controller('myCtrl', function($scope) {
-//            let qrCode;
+    var app = angular.module("umbraco",[]);
+      app.controller("scanController",
+      function ($scope, $http) {
+
+        $scope.qrscanner = function(){
           let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
           scanner.addListener('scan', function (content) {
-//             qrCode = content;
-//             $scope.QR = content;
-            window.open(content, '_blank');
-            console.log(content);
+            // window.open(content, '_blank');
+            $scope.getRequest();
           });
           Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
 //                var selectedCam = cameras[0];
-               if(cameras[1]){ scanner.start(cameras[1]); } else { scanner.start(cameras[0]); } 
+            if(cameras[1]){ scanner.start(cameras[1]); } else { scanner.start(cameras[0]); } 
               //scanner.start(cameras[1]);
             } else {
               console.error('No cameras found.');
@@ -35,9 +38,37 @@
           }).catch(function (e) {
             console.error(e);
           });
-// });
-//         })(myApp);
-     
+        }
+
+        $scope.playAudio = function() {
+            var audio = new Audio('audio/beep-05.mp3');
+            audio.play();
+        };  
+
+        $scope.getRequest = function() {
+        console.log("I've been pressed!");
+          $http.get("https://my.api.mockaroo.com/sample?key=409039d0").then(
+            function successCallback(response) {
+              $scope.response = response;
+              $scope.playAudio();
+            },
+            function errorCallback(response) {
+              console.log("Unable to perform get request");
+            }
+          );
+        };
+
+        $scope.postRequest = function() {
+          $http.post("http://urlforapi.com/", data).then(
+            function successCallback(response) {
+              console.log("Successfully POST-ed data");
+            },
+            function errorCallback(response) {
+              console.log("POST-ing of data failed");
+            }
+          );
+        };
+      });
     </script>
-    </body>
+  </body>
 </html>
